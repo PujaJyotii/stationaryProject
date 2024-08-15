@@ -3,12 +3,14 @@ import classes from "./AddData.module.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listAction } from "../Redux/ListSlice";
+import { cartAction } from "../Redux/CartSlice";
 
 function AddData() {
   const [nameI, setNameI] = useState("");
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const list = useSelector((state) => state.List.list);
+  const cartList = useSelector((state) => state.CartList.cartList);
   const dispatch = useDispatch();
   const SubmitHandler = async (e) => {
     e.preventDefault();
@@ -35,7 +37,7 @@ function AddData() {
         throw new Error(resp.status);
       }
       let data = await resp.json();
-      obj = { ...obj, name: data.name };
+      obj = { ...obj, id: data.name };
       dispatch(listAction.add(obj));
     } catch (err) {
       console.log(err);
@@ -137,6 +139,95 @@ function AddData() {
     };
     getData();
   }, [dispatch]);
+  useEffect(() => {
+    const getData = async () => {
+      let resp = await fetch(
+        "https://newprojectpractise-93cee-default-rtdb.firebaseio.com/cart.json"
+      );
+      let data = await resp.json();
+      let res = [];
+      for (let key in data) {
+        res.push({
+          ...data[key],
+          id: key,
+        });
+      }
+      dispatch(cartAction.get(res));
+    };
+    getData();
+  }, [dispatch]);
+  const addHandler = async (item, amount) => {
+    let index = cartList.findIndex((el) => el.nameI === item.nameI);
+    let Index = list.findIndex((el) => el.nameI === item.nameI);
+
+    try {
+      if (index === -1) {
+        let obj = {
+          ...item,
+          amount: amount,
+        };
+        let resp = await fetch(
+          "https://newprojectpractise-93cee-default-rtdb.firebaseio.com/cart.json",
+          {
+            method: "POST",
+            body: JSON.stringify(obj),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (!resp.ok) {
+          throw new Error(resp.status);
+        }
+        let data = await resp.json();
+        obj = { ...obj, id: data.name };
+        dispatch(cartAction.add(obj));
+      } else {
+        let newObj = {
+          ...cartList[index],
+          amount: cartList[index].amount + amount,
+        };
+        let resp = await fetch(
+          `https://newprojectpractise-93cee-default-rtdb.firebaseio.com/cart/${cartList[index].id}.json`,
+          {
+            method: "PUT",
+            body: JSON.stringify(newObj),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (!resp.ok) {
+          throw new Error(resp.status);
+        }
+        let data = await resp.json();
+        console.log(data);
+        dispatch(cartAction.add(newObj));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      let newObj = {
+        id: item.id,
+        nameI: item.nameI,
+        price: item.price,
+        quantity: item.quantity - amount,
+      };
+      let resp = await fetch(
+        `https://newprojectpractise-93cee-default-rtdb.firebaseio.com/data/${list[Index].id}.json`,
+        {
+          method: "PUT",
+          body: JSON.stringify(newObj),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (!resp.ok) {
+        throw new Error(resp.status);
+      }
+      let data = await resp.json();
+      console.log(data);
+      dispatch(listAction.update(newObj));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Card className={classes.add}>
@@ -211,9 +302,24 @@ function AddData() {
                 </div>
               </div>
               <div className={classes.inner}>
-                <Button className={classes.btn}>Add One</Button>
-                <Button className={classes.btn}>Add Two</Button>
-                <Button className={classes.btn}>Add Three</Button>
+                <Button
+                  className={classes.btn}
+                  onClick={() => addHandler(el, 1)}
+                >
+                  Add One
+                </Button>
+                <Button
+                  className={classes.btn}
+                  onClick={() => addHandler(el, 2)}
+                >
+                  Add Two
+                </Button>
+                <Button
+                  className={classes.btn}
+                  onClick={() => addHandler(el, 3)}
+                >
+                  Add Three
+                </Button>
               </div>
             </li>
           ))}

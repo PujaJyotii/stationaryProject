@@ -12,9 +12,11 @@ const ListSlice = createSlice({
     },
     update(state, action) {
       let index = state.list.findIndex(
-        (el) => el.nameI === action.payload.item.nameI
+        (el) => el.nameI === action.payload.nameI
       );
-      state.list[index] = action.payload.obj;
+      if (state.list[index].quantity > 0) {
+        state.list[index] = action.payload;
+      }
     },
     get(state, action) {
       state.list = action.payload;

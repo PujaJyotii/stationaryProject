@@ -1,7 +1,12 @@
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Badge, Button, Container, Nav, Navbar } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-function Header() {
+function Header(props) {
+  let cartList = useSelector((state) => state.CartList.cartList);
+  let total = cartList.reduce((total, item) => {
+    return total + item.amount;
+  }, 0);
   return (
     <Navbar bg="primary" data-bs-theme="dark">
       <Container>
@@ -15,6 +20,13 @@ function Header() {
           </Nav.Link>
         </Nav>
       </Container>
+      <Button
+        variant="info"
+        className="justify-content-end m-4"
+        onClick={props.onShow}
+      >
+        Cart <Badge bg="secondary">{total}</Badge>
+      </Button>
     </Navbar>
   );
 }
