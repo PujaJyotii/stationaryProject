@@ -1,0 +1,15 @@
+.item {
+  margin: 20px auto;
+  max-width: 60%;
+  background-color: blue;
+  text-align: center;
+  color: white;
+}
+.btn {
+  background-color: rgb(2, 2, 90);
+  color: white;
+}
+
+.footer {
+  color: white;
+}

@@ -1,0 +1,57 @@
+.add {
+  margin: 20px auto;
+  max-width: 40%;
+  background-color: blue;
+}
+
+.btn {
+  background-color: rgb(2, 2, 90);
+  color: white;
+}
+.name {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.addN {
+  margin: 20px auto;
+  max-width: 60%;
+  background-color: blue;
+}
+
+.name li {
+  margin: 5px;
+  padding: 3px;
+  border: 2px solid black;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.val {
+  display: flex;
+  flex-direction: column;
+  margin: 3px;
+  color: rgb(1, 1, 36);
+  font-weight: bolder;
+}
+.outer {
+  display: flex;
+  flex-direction: column;
+  margin: 3px;
+}
+
+.outer1 {
+  display: flex;
+  flex-direction: row;
+  margin: 3px;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  margin: 3px;
+}
